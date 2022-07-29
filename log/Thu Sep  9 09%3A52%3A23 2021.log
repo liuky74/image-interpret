@@ -1,9 +1,0 @@
-|2021-09-09 09:52:23,407|root|INFO|test_upp||building model.....|
-|2021-09-09 09:52:23,598|root|INFO|test_upp||done|
-|2021-09-09 09:52:23,599|root|INFO|test_upp||move to GPU.....|
-|2021-09-09 09:52:25,101|root|INFO|test_upp||done|
-|2021-09-09 09:52:25,101|root|INFO|test_upp||standby....|
-|2021-09-09 09:52:29,175|root|INFO|test_upp||-----------------------------------------|
-|2021-09-09 09:52:29,745|root|INFO|test_upp||processing 4.png|
-|2021-09-09 09:52:34,937|root|INFO|test_upp||cls name: 建筑|
-|2021-09-09 09:52:42,914|root|INFO|test_upp||0/1|
