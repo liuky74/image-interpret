@@ -1,0 +1,68 @@
+|2021-09-03 17:01:12,382|root|INFO|test_upp||building model.....|
+|2021-09-03 17:01:12,532|root|INFO|test_upp||done|
+|2021-09-03 17:01:12,532|root|INFO|test_upp||move to GPU.....|
+|2021-09-03 17:01:15,422|root|INFO|test_upp||done|
+|2021-09-03 17:01:15,422|root|INFO|test_upp||standby....|
+|2021-09-03 17:01:37,446|root|INFO|test_upp||-----------------------------------------|
+|2021-09-03 17:01:37,446|root|INFO|test_upp||processing 610.jpg|
+|2021-09-03 17:01:37,687|root|INFO|test_upp||cls name: 建筑|
+|2021-09-03 17:01:38,318|root|INFO|test_upp||0/10|
+|2021-09-03 17:01:39,246|root|INFO|test_upp||1/10|
+|2021-09-03 17:01:40,167|root|INFO|test_upp||2/10|
+|2021-09-03 17:01:41,079|root|INFO|test_upp||3/10|
+|2021-09-03 17:01:41,985|root|INFO|test_upp||4/10|
+|2021-09-03 17:01:42,921|root|INFO|test_upp||5/10|
+|2021-09-03 17:01:43,928|root|INFO|test_upp||6/10|
+|2021-09-03 17:01:44,866|root|INFO|test_upp||7/10|
+|2021-09-03 17:01:45,836|root|INFO|test_upp||8/10|
+|2021-09-03 17:01:46,818|root|INFO|test_upp||9/10|
+|2021-09-03 17:01:47,805|root|INFO|test_upp||10/10|
+|2021-09-03 17:01:51,152|root|INFO|test_upp||cls name: 水域|
+|2021-09-03 17:01:51,632|root|INFO|test_upp||0/10|
+|2021-09-03 17:01:52,541|root|INFO|test_upp||1/10|
+|2021-09-03 17:01:53,460|root|INFO|test_upp||2/10|
+|2021-09-03 17:01:54,382|root|INFO|test_upp||3/10|
+|2021-09-03 17:01:55,285|root|INFO|test_upp||4/10|
+|2021-09-03 17:01:56,184|root|INFO|test_upp||5/10|
+|2021-09-03 17:01:57,092|root|INFO|test_upp||6/10|
+|2021-09-03 17:01:58,003|root|INFO|test_upp||7/10|
+|2021-09-03 17:01:58,913|root|INFO|test_upp||8/10|
+|2021-09-03 17:01:59,817|root|INFO|test_upp||9/10|
+|2021-09-03 17:02:00,725|root|INFO|test_upp||10/10|
+|2021-09-03 17:02:03,979|root|INFO|test_upp||cls name: 耕地|
+|2021-09-03 17:02:04,508|root|INFO|test_upp||0/10|
+|2021-09-03 17:02:05,418|root|INFO|test_upp||1/10|
+|2021-09-03 17:02:06,331|root|INFO|test_upp||2/10|
+|2021-09-03 17:02:07,235|root|INFO|test_upp||3/10|
+|2021-09-03 17:02:08,139|root|INFO|test_upp||4/10|
+|2021-09-03 17:02:09,119|root|INFO|test_upp||5/10|
+|2021-09-03 17:02:10,037|root|INFO|test_upp||6/10|
+|2021-09-03 17:02:10,983|root|INFO|test_upp||7/10|
+|2021-09-03 17:02:12,007|root|INFO|test_upp||8/10|
+|2021-09-03 17:02:12,995|root|INFO|test_upp||9/10|
+|2021-09-03 17:02:13,962|root|INFO|test_upp||10/10|
+|2021-09-03 17:02:17,278|root|INFO|test_upp||cls name: 绿地|
+|2021-09-03 17:02:17,876|root|INFO|test_upp||0/10|
+|2021-09-03 17:02:18,808|root|INFO|test_upp||1/10|
+|2021-09-03 17:02:19,726|root|INFO|test_upp||2/10|
+|2021-09-03 17:02:20,636|root|INFO|test_upp||3/10|
+|2021-09-03 17:02:21,549|root|INFO|test_upp||4/10|
+|2021-09-03 17:02:22,453|root|INFO|test_upp||5/10|
+|2021-09-03 17:02:23,363|root|INFO|test_upp||6/10|
+|2021-09-03 17:02:24,276|root|INFO|test_upp||7/10|
+|2021-09-03 17:02:25,201|root|INFO|test_upp||8/10|
+|2021-09-03 17:02:26,083|root|INFO|test_upp||9/10|
+|2021-09-03 17:02:26,981|root|INFO|test_upp||10/10|
+|2021-09-03 17:02:29,916|root|INFO|test_upp||cls name: 森林|
+|2021-09-03 17:02:30,527|root|INFO|test_upp||0/10|
+|2021-09-03 17:02:31,411|root|INFO|test_upp||1/10|
+|2021-09-03 17:02:32,317|root|INFO|test_upp||2/10|
+|2021-09-03 17:02:33,221|root|INFO|test_upp||3/10|
+|2021-09-03 17:02:34,184|root|INFO|test_upp||4/10|
+|2021-09-03 17:02:35,153|root|INFO|test_upp||5/10|
+|2021-09-03 17:02:36,112|root|INFO|test_upp||6/10|
+|2021-09-03 17:02:37,096|root|INFO|test_upp||7/10|
+|2021-09-03 17:02:38,034|root|INFO|test_upp||8/10|
+|2021-09-03 17:02:38,943|root|INFO|test_upp||9/10|
+|2021-09-03 17:02:39,945|root|INFO|test_upp||10/10|
+|2021-09-03 17:02:43,319|root|INFO|test_upp||done---------------------------------|

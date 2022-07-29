@@ -1,0 +1,150 @@
+import numpy as np
+import os
+import cv2
+import logging
+from pathlib import Path
+import segmentation_models as smp
+import torch
+from torchvision import transforms as T
+import time
+import shutil
+
+os.makedirs("./log") if not os.path.exists("./log") else None
+os.makedirs("./input") if not os.path.exists("./input") else None
+os.makedirs("./output") if not os.path.exists("./output") else None
+os.makedirs("./done") if not os.path.exists("./done") else None
+
+logging.basicConfig(filename="./log/{}.log".format(time.asctime()),
+                    format="|%(asctime)s|%(name)s|%(levelname)s|%(module)s||%(message)s|",
+                    level=logging.INFO)
+
+input_size=960
+output_size=512
+
+IMAGE_SIZE = output_size
+DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
+weight_paths = [
+    # ["建筑","./snaps/UPPmodel_CLS7_E39.pth"],
+    # ["水域","./snaps/UPPmodel_CLS6_E89.pth"],
+    # ["耕地","./snaps/UPPmodel_CLS5_E46.pth"],
+    # ["绿地","./snaps/UPPmodel_CLS4_E52.pth"],
+    # ["森林","./snaps/UPPmodel_CLS0_E54.pth"],
+
+    ["建筑","./snaps/UPPmodel_CLS建筑_special.pth","./snaps/UPPmodel_CLS7_E39.pth"],
+    ["水域","./snaps/UPPmodel_CLS水域_special.pth","./snaps/UPPmodel_CLS6_E89.pth"],
+    ["耕地","./snaps/UPPmodel_CLS耕地_special.pth","./snaps/UPPmodel_CLS耕地_E32.pth"],
+    ["绿地","./snaps/UPPmodel_CLS草地_special.pth","./snaps/UPPmodel_CLS4_E52.pth"],
+    ["森林","./snaps/UPPmodel_CLS森林_special.pth","./snaps/UPPmodel_CLS森林_E126.pth"],
+]
+
+trfm = T.Compose([
+    T.ToPILImage(),
+    T.Resize(IMAGE_SIZE),
+    T.ToTensor(),
+    T.Normalize([0.625, 0.448, 0.688],
+                [0.131, 0.177, 0.101]),
+])
+
+
+
+
+if __name__ == '__main__':
+
+    input_path = Path("./input")
+    logging.info("building model.....")
+    model = smp.UnetPlusPlus(
+        encoder_name="efficientnet-b4",  # choose encoder, e.g. mobilenet_v2 or efficientnet-b7
+        encoder_weights=None,  # use `imagenet` pretreined weights for encoder initialization
+        in_channels=3,  # model input channels (1 for grayscale images, 3 for RGB, etc.)
+        classes=1,  # model output channels (number of classes in your dataset)
+    )
+    logging.info("done")
+    logging.info("move to GPU.....")
+    model.to(DEVICE)
+    logging.info("done")
+    logging.info("standby....")
+    while True:
+        time.sleep(1)
+        file_list = list(input_path.glob("*.jpg"))
+        file_list += list(input_path.glob("*.png"))
+        if len(file_list)<=0:
+            # logging.info("watting...")
+            continue
+        for file_path in file_list:
+            file_name = file_path.stem
+            logging.info("-----------------------------------------")
+            logging.info("processing {}".format(file_path.parts[-1]))
+            input_image = cv2.imread(file_path.as_posix())
+            org_image = input_image
+            for cls_name,special_weight_path,weight_path in weight_paths:
+                logging.info("cls name: {}".format(cls_name))
+                if file_name == "610":
+                    model.load_state_dict(torch.load(special_weight_path))
+                else:
+                    model.load_state_dict(torch.load(weight_path))
+                model.eval()
+                output_mask = np.zeros_like(org_image)
+                output_total = np.zeros_like(org_image)
+                bar_process = list(range(0,org_image.shape[0],input_size//2))
+                for y_idx,y_pixel in enumerate(bar_process):
+                    logging.info("{}/{}".format(y_idx, len(bar_process)-1))
+                    if y_pixel+input_size > org_image.shape[0]:
+                        y_pixel = org_image.shape[0] - input_size
+                    for x_idx,x_pixel in enumerate(range(0,org_image.shape[1],input_size//2)):
+                        if x_pixel+input_size > org_image.shape[1]:
+                            x_pixel = org_image.shape[1]-input_size
+                        start_point=(x_pixel,y_pixel)
+                        end_point = (x_pixel+input_size,y_pixel+input_size)
+                        image = org_image[start_point[1]:end_point[1],start_point[0]:end_point[0],:]
+                        image_tensor = trfm(image)
+                        with torch.no_grad():
+                            image_tensor = image_tensor.to(DEVICE)[None]
+                            score = model(image_tensor)[0][0]
+                            score_sigmoid = score.sigmoid().cpu().numpy()
+                            score_sigmoid = (score_sigmoid > 0.5).astype(np.uint8) * 255
+                            score_sigmoid = cv2.resize(score_sigmoid, (input_size, input_size))
+                        # todo
+                        # single_output = image.copy()
+                        # single_output[:,:,2] = score_sigmoid
+                        # save_path = "./output/{}/{}-{}_{}.png".format(cls_name, file_name,y_pixel,x_pixel)
+                        # cv2.imencode(".png", single_output)[1].tofile(save_path)
+                        # todo end
+                        # total是完整图像的,主要用于添加边缘的部分
+                        output_total[start_point[1]:end_point[1], start_point[0]:end_point[0],2] = score_sigmoid
+                        # score_sigmoid是取中心部分结果
+                        score_sigmoid = score_sigmoid[input_size//4:-input_size//4, input_size//4:-input_size//4]
+                        output_mask[start_point[1] + input_size // 4:end_point[1] - input_size // 4,
+                                   start_point[0]+input_size//4:end_point[0]-input_size//4, 2] = score_sigmoid
+                output_mask[output_mask[:, :, 2] == 0] = output_total[output_mask[:, :, 2] == 0]
+                # 两张图叠底
+                output_maskR = output_mask[:, :, 2]
+                # 形态学处理,开/闭运算
+                output_maskR = cv2.morphologyEx(output_maskR, cv2.MORPH_CLOSE,cv2.getStructuringElement(cv2.MORPH_RECT, (9, 9)))
+                output_maskR = cv2.morphologyEx(output_maskR, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_RECT, (9, 9)))
+                output_mask[:,:,2] = output_maskR
+                # 边缘检测
+                output_mask_canny = cv2.Canny(output_maskR, 10, 150)
+                # 膨胀
+                output_mask_canny = cv2.dilate(output_mask_canny, np.ones((5, 5), np.uint8), iterations=1)
+                # 取出原图R通道
+                org_imageR = org_image[:,:,2].copy()
+                # 涂图
+
+                org_imageR[output_maskR != 0] = np.clip(org_imageR[output_maskR != 0].astype(np.float32) + 30, 0, 255)
+                org_mask = org_image.copy()
+                org_mask[output_mask_canny!=0] = 0
+                # 画边
+                org_imageR[output_mask_canny!=0] = 255
+                org_mask[:,:,2] = org_imageR
+                # 两张图合并
+                output_mask = np.concatenate([org_mask, output_mask], 1)
+                # 两张图融合
+                # output_mask = cv2.addWeighted(org_image, 0.7, output_mask, 0.3, 0)
+                save_path = "./output/{}/{}.png".format(cls_name,file_name)
+                if not os.path.exists(os.path.dirname(save_path)):
+                    os.makedirs(os.path.dirname(save_path))
+                cv2.imencode(".png", output_mask)[1].tofile(save_path)
+            if os.path.exists("./done/{}".format(file_path.parts[-1])):
+                os.remove("./done/{}".format(file_path.parts[-1]))
+            shutil.move(file_path.as_posix(),"./done",)
+            logging.info("done---------------------------------")

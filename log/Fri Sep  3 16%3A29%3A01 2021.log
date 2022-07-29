@@ -1,0 +1,5 @@
+|2021-09-03 16:29:01,653|root|INFO|test_upp||building model.....|
+|2021-09-03 16:29:01,813|root|INFO|test_upp||done|
+|2021-09-03 16:29:01,813|root|INFO|test_upp||move to GPU.....|
+|2021-09-03 16:29:04,501|root|INFO|test_upp||done|
+|2021-09-03 16:29:04,501|root|INFO|test_upp||standby....|
